@@ -1,0 +1,12 @@
+library(survival)
+library(survminer)
+setwd("")
+rt=read.table("riskTrain.txt",header=T,sep="\t",check.names=F,row.names=1)
+res.cut<- surv_cutpoint(rt, time="futime", event="fustat",variables = c("riskScore"))
+res.cat<- surv_categorize(res.cut)
+
+riskScore<-survfit(Surv(futime,fustat)~riskScore,data = res.cat)
+pdf(file="best cutoff.pdf",width=6,height=6, onefile=FALSE)
+surPlot=ggsurvplot(riskScore,data = res.cat, risk.table = TRUE, conf.int =F,pval=T)
+print(surPlot)
+dev.off()
